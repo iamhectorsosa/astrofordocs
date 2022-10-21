@@ -1,5 +1,5 @@
 ---
-import Navigation from "./Navigation.astro";
+import Navbar from "./Navbar.astro";
 import Footer from "./Footer.astro";
 
 import SideNavigation from "../component/SideNavigation.astro";
@@ -83,7 +83,7 @@ const {
         <meta property="twitter:image" content={image} />
     </head>
     <body>
-        <Navigation items={navMenuItems} />
+        <Navbar items={navMenuItems} />
         <main class="flex mx-auto min-h-[50rem] max-w-6xl px-6 py-12">
             <SideNavigation />
             <div class="ml-4">
