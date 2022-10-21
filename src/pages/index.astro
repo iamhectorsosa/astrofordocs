@@ -2,33 +2,26 @@
 import Layout from "../layouts/Layout.astro";
 
 import sanity from "../lib/sanity-client";
-import { allPagesQuery } from "../lib/sanity-queries";
+import { pageQueryBySlug } from "../lib/sanity-queries";
 import type { PageType } from "../lib/types";
 
 import parse from "../utils/parse";
 
-export async function getStaticPaths() {
-    const pages: Array<PageType> = await sanity.fetch(allPagesQuery);
-    return pages.map((page) => {
-        return {
-            params: { slug: `${page.category.slug}/${page.slug}` },
-            props: {
-                title: page.title,
-                lastUpdated: page.lastUpdated,
-                body: parse(page.body),
-            },
-        };
-    });
-}
+const pageSlug = "index";
 
-const { title, lastUpdated, body } = Astro.props;
+const page: PageType = await sanity.fetch(pageQueryBySlug, {
+    pageSlug,
+});
+
+const lastUpdated = page.lastUpdated;
+const body = parse(page.body);
 ---
 
-<Layout title={title}>
+<Layout title="Home">
     <div class="space-y-2">
         <section>
             <h1 class="text-2xl font-bold sm:text-3xl lg:text-6xl capitalize">
-                {title}
+                Astro for Documentation
             </h1>
             <p class="text-sm my-2 text-slate-500">
                 Last updated: {

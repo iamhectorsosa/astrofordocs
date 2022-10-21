@@ -8,7 +8,7 @@ const categories: Array<CategoryType> = await sanity.fetch(allCategoriesQuery);
 const pages: Array<PageType> = await sanity.fetch(allPagesQuery);
 ---
 
-<div class="min-w-fit px-12 mx-4 border-r">
+<div class="hidden lg:block min-w-fit px-12 mx-4 border-r">
     {
         categories.map((category) => (
             <>

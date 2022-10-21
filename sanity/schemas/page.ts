@@ -40,17 +40,9 @@ export default {
         {
             name: "category",
             title: "Category",
+            description: "Please add a category for the page to be listed",
             type: "reference",
             to: { type: "category" },
-            validation: (Rule: any) => Rule.required(),
-        },
-        {
-            name: "publishedAt",
-            title: "Published at",
-            type: "datetime",
-            options: {
-                timeStep: 60,
-            },
         },
         {
             name: "mainImage",
@@ -77,7 +69,7 @@ export default {
         prepare(selection: any) {
             const { category } = selection;
             return Object.assign({}, selection, {
-                subtitle: category && `in ${category}`,
+                subtitle: category ? `in ${category}` : "Page not listed",
             });
         },
     },
