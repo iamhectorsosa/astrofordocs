@@ -16,3 +16,5 @@ const allPagesFields = `{
 }`;
 
 export const allPagesQuery = `*[_type == "page" && !(_id in path("drafts.**"))] | order(order) ${allPagesFields}`;
+
+export const pageQueryBySlug = `*[_type == "page" && category->slug.current == $categorySlug && slug.current == $pageSlug] |  order(_updatedAt desc) ${allPagesFields}[0]`;
