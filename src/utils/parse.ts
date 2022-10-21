@@ -1,11 +1,5 @@
----
-import Layout from "../layouts/Layout.astro";
 import { marked } from "marked";
 import hljs from "highlight.js";
-
-import config from "../../config/github-config";
-import fetcher from "../utils/fetcher";
-import { getEscapedText } from "../utils/string";
 
 marked.setOptions({
     highlight: function (code, lang) {
@@ -19,7 +13,7 @@ marked.setOptions({
 
 const renderer = {
     heading(text: string, level: number) {
-        const escapedText = getEscapedText(text);
+        const escapedText = text.toLowerCase().replace(/[^\w]+/g, "-");
 
         return `
             <h${level + 1}>
@@ -35,27 +29,6 @@ const renderer = {
 
 marked.use({ renderer });
 
-const content = (await fetcher(
-    `https://raw.githubusercontent.com/ekqt/astro-blog/main/README.md`,
-    config,
-    "text"
-).then((res) => marked.parse(res))) as string;
----
-
-<Layout title="Welcome to Astro Docs">
-    <div class="space-y-2">
-        <section>
-            <h1
-                class="text-2xl font-bold sm:text-3xl lg:text-6xl capitalize mb-4"
-            >
-                Welcome 👋🏼
-            </h1>
-            <article
-                aria-label="Post"
-                class="prose:slate prose min-w-full prose-p:text-justify prose-p:leading-loose prose-li:leading-loose prose-headings:m-0"
-                set:html={content}
-            >
-            </article>
-        </section>
-    </div>
-</Layout>
+export default function parse(input: string) {
+    return marked.parse(input);
+}

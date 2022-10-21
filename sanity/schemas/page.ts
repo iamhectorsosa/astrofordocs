@@ -20,6 +20,18 @@ export default {
             validation: (Rule: any) => Rule.required(),
         },
         {
+            name: "order",
+            title: "Order",
+            description: "Please use multiples of 100",
+            type: "number",
+            validation: (Rule: any) =>
+                Rule.required().custom((number: number) => {
+                    return number % 100 === 0
+                        ? true
+                        : "Please use multiples of 100";
+                }),
+        },
+        {
             name: "author",
             title: "Author(s)",
             type: "array",
