@@ -1,0 +1,117 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+import { marked } from "marked";
+import hljs from "highlight.js";
+
+import config from "../../config/github-config";
+import fetcher from "../utils/fetcher";
+import { getName, getPath, getEscapedText } from "../utils/string";
+
+import type { PathType, DocType, ContentType } from "../utils/types";
+
+marked.setOptions({
+    highlight: function (code, lang) {
+        hljs.configure({
+            classPrefix: "token ",
+        });
+        const language = hljs.getLanguage(lang) ? lang : "plaintext";
+        return hljs.highlight(code, { language }).value;
+    },
+});
+
+const renderer = {
+    heading(text: string, level: number) {
+        const escapedText = getEscapedText(text);
+
+        return `
+            <h${level + 1}>
+              <a name="${escapedText}" class="py-4 flex items-center gap-2 anchor group cursor-pointer font-bold no-underline" href="#${escapedText}">
+                ${text}
+                <svg class="hidden h-5 w-5 group-hover:inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                </svg>
+              </a>
+            </h${level + 1}>`;
+    },
+};
+
+marked.use({ renderer });
+
+export async function getStaticPaths() {
+    const pathRes = (await fetcher(
+        "https://api.github.com/repos/ekqt/astro-blog/contents",
+        config
+    )) as Array<PathType>;
+
+    const paths = pathRes
+        .filter((i) => i.type === "dir")
+        .map((i) => {
+            const { name, path } = i;
+            return {
+                name: getName(name),
+                path: getPath(path),
+            };
+        });
+
+    const docs: Array<DocType> = [];
+
+    for (let path of paths) {
+        const pathDocRes = (await fetcher(
+            `https://api.github.com/repos/ekqt/astro-blog/contents/${path.path}`,
+            config
+        )) as Array<DocType>;
+        const pathDocs: Array<DocType> = pathDocRes.map((i) => {
+            const { name, path } = i;
+            return {
+                name: getName(name),
+                path: getPath(path),
+            };
+        });
+        docs.push(...pathDocs);
+    }
+
+    const content: Array<ContentType> = [];
+
+    for (let item of docs) {
+        let obj = { title: item.name, slug: item.path, body: "" };
+        obj.body = (await fetcher(
+            `https://raw.githubusercontent.com/ekqt/astro-blog/main/${item.path}.md`,
+            config,
+            "text"
+        ).then((res) => marked.parse(res))) as string;
+
+        content.push(obj);
+    }
+
+    return content.map((n) => {
+        return {
+            params: { slug: n.slug },
+            props: {
+                title: n.title,
+                body: n.body,
+            },
+        };
+    });
+}
+
+const { title, body } = Astro.props;
+---
+
+<Layout title={title}>
+    <div class="space-y-2">
+        <section>
+            <h1
+                class="text-2xl font-bold sm:text-3xl lg:text-6xl capitalize mb-4"
+            >
+                {title}
+            </h1>
+            <article
+                aria-label="Post"
+                class="prose:slate prose min-w-full prose-p:text-justify prose-p:leading-loose prose-li:leading-loose prose-headings:m-0"
+                set:html={body}
+            >
+            </article>
+        </section>
+    </div>
+</Layout>
