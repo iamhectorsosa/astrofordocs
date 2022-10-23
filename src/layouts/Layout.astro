@@ -1,4 +1,5 @@
 ---
+import Meta from "./head/Meta.astro";
 import Navbar from "./Navbar.astro";
 import Footer from "./Footer.astro";
 
@@ -28,30 +29,12 @@ const footerMenuItems = [
 
 export interface Props {
     title?: string;
-    keywords?: string;
     description?: string;
-    baseUrl?: string;
     path?: string;
     image?: string;
 }
 
-const defaultProps = {
-    title: "Astro + Mdx",
-    keywords: "Astro, MDX, TailwindCSS",
-    description: "Built with Astro, MDX and TailwindCSS",
-    baseUrl: "https://astromdx.vercel.app",
-    path: "/",
-    image: "/home.png",
-};
-
-const {
-    title = defaultProps.title,
-    keywords = defaultProps.keywords,
-    description = defaultProps.description,
-    baseUrl = defaultProps.baseUrl,
-    path = defaultProps.path,
-    image = defaultProps.image,
-} = Astro.props;
+const { title, description, path, image } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -60,42 +43,27 @@ const {
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="generator" content={Astro.generator} />
-
-        {/* Primary Meta Tags */}
-        <title>{title}</title>
-        <meta name="title" content={title} />
-        <meta name="description" content={description} />
-        <meta name="keywords" content={keywords} />
-        <link rel="icon" href="/favicon.svg" />
-
-        {/* Open Graph - Facebook */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={`${baseUrl + path}`} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
-        <meta property="og:image" content={image} />
-
-        {/* Twitter*/}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content={`${baseUrl + path}`} />
-        <meta property="twitter:title" content={title} />
-        <meta property="twitter:description" content={description} />
-        <meta property="twitter:image" content={image} />
+        <Meta
+            title={title}
+            description={description}
+            path={path}
+            image={image}
+        />
     </head>
-    <body>
-        <Navbar items={navMenuItems} />
-        <main class="flex mx-auto min-h-[50rem] max-w-6xl px-6 py-12">
-            <SideNavigation />
-            <div class="mx-4 w-full">
+    <body class="grid min-h-screen max-w-7xl mx-auto">
+        <SideNavigation />
+        <main class="p-6 lg:p-12">
+            <Navbar items={navMenuItems} />
+            <div
+                class="bg-white dark:bg-slate-800 my-2 p-6 rounded-xl max-w-[90vw]"
+            >
                 <slot />
             </div>
+            <Footer items={footerMenuItems} />
         </main>
-        <Footer items={footerMenuItems} />
         <style is:global>
             html,
             body {
-                padding: 0;
-                margin: 0;
                 font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
                     Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans,
                     Helvetica Neue, sans-serif;
@@ -123,16 +91,30 @@ const {
                 outline: none;
             }
 
+            /** Side Navigation */
+            body {
+                grid: [stack] 1fr / 1fr [stack] 5fr;
+            }
+
+            @media (max-width: 1024px) {
+                body {
+                    grid: [stack] 1fr / min-content [stack] 1fr;
+                }
+                body > * {
+                    grid-area: stack;
+                }
+            }
+
             /** Inline code */
             .prose p > code,
             .prose li > code {
-                @apply rounded bg-gray-200 p-1 font-normal dark:bg-gray-800;
+                @apply rounded bg-gray-200 p-1 font-normal dark:bg-black;
             }
 
             /** Codeblocks */
 
             .prose > pre {
-                @apply rounded-xl py-6 px-6 text-sm md:py-8 md:text-base;
+                @apply rounded-xl py-6 px-6 text-sm md:py-8 md:text-base dark:bg-black;
             }
 
             code[class*="language-"],

@@ -11,21 +11,42 @@ export interface Props {
 const { items } = Astro.props;
 ---
 
-<nav class="h-16 mx-auto flex max-w-screen-xl items-center justify-between p-6">
-    <a
-        href="/"
-        class="text-xl font-bold hover:text-slate-600 dark:hover:text-slate-300"
-    >
-        Astro for Docs
-    </a>
-
-    <div class="flex gap-6 font-light">
+<nav class="flex items-center justify-between py-4">
+    <header class="flex items-center gap-2">
+        <a
+            title="Open Menu"
+            aria-label="Open Menu"
+            href="#sidenav-open"
+            class="lg:hidden"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M3.75 9h16.5m-16.5 6.75h16.5"></path>
+            </svg>
+        </a>
+        <a
+            href="/"
+            class="text-xl font-bold hover:text-slate-600 dark:hover:text-slate-300"
+        >
+            Astro for Docs
+        </a>
+    </header>
+    <div class="flex gap-4">
         {
             items.map((item) => (
                 <a
                     href={item.url}
                     target="_blank"
-                    class="flex items-center gap-2 font-light hover:text-slate-600 dark:hover:text-slate-300"
+                    class="flex items-center gap-2 hover:text-slate-600 dark:hover:text-slate-300"
                 >
                     <svg
                         class="h-5 w-5"

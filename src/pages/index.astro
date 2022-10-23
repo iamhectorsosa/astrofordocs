@@ -18,8 +18,8 @@ const body = parse(page.body);
 ---
 
 <Layout title="Home">
-    <div class="space-y-2">
-        <section>
+    <section>
+        <div class="py-2">
             <h1 class="text-2xl font-bold sm:text-3xl lg:text-6xl capitalize">
                 Astro for Documentation
             </h1>
@@ -32,12 +32,12 @@ const body = parse(page.body);
                     }).format(new Date(lastUpdated))
                 }
             </p>
-            <article
-                aria-label="Post"
-                class="prose:slate prose min-w-full prose-p:text-justify prose-p:leading-loose prose-li:leading-loose prose-headings:m-0"
-                set:html={body}
-            >
-            </article>
-        </section>
-    </div>
+        </div>
+        <article
+            aria-label="Post"
+            class="prose:slate prose md:max-w-none prose-p:text-justify prose-p:leading-loose prose-li:leading-loose prose-headings:m-0"
+            set:html={body}
+        >
+        </article>
+    </section>
 </Layout>
