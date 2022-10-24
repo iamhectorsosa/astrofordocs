@@ -105,6 +105,10 @@ const { title, description, path, image } = Astro.props;
                 }
             }
 
+            .prose p > a {
+                @apply no-underline border-b-2 border-slate-500 pb-1 font-semibold transition-all hover:pb-2 hover:text-slate-700 dark:hover:text-slate-300;
+            }
+
             /** Inline code */
             .prose p > code,
             .prose li > code {
@@ -114,7 +118,11 @@ const { title, description, path, image } = Astro.props;
             /** Codeblocks */
 
             .prose > pre {
-                @apply rounded-xl py-6 px-6 text-sm md:py-8 md:text-base dark:bg-black;
+                @apply rounded-xl py-6 px-6 md:py-8 dark:bg-black;
+            }
+
+            .prose > pre > code {
+                @apply text-xs md:text-sm;
             }
 
             code[class*="language-"],
@@ -135,6 +143,11 @@ const { title, description, path, image } = Astro.props;
                 -moz-hyphens: none;
                 -ms-hyphens: none;
                 hyphens: none;
+            }
+
+            .line-number::before {
+                @apply ml-0 mr-5 inline-block w-4 text-right text-gray-400;
+                content: attr(line);
             }
 
             .token.atrule {

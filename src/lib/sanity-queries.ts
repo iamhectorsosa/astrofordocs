@@ -10,6 +10,7 @@ const allPagesFields = `{
     title,
     "slug": slug.current,
     order,
+    author[]->{name},
     category->{title, "slug": slug.current},
     body,
     "lastUpdated": _updatedAt

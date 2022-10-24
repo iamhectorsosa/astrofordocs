@@ -18,10 +18,10 @@ const pages: Array<PageType> = await sanity.fetch(allPagesQuery);
         {
             categories.map((category) => (
                 <>
-                    <h3 class="mt-4 first:mt-0 mb-2 font-semibold text-lg">
+                    <h3 class="mt-4 first:mt-0 mb-2 font-semibold text-2xl lg:text-lg">
                         {category.title}
                     </h3>
-                    <ul class="space-y-2 text-slate-500">
+                    <ul class="space-y-2 text-slate-500 text-lg lg:text-base">
                         {pages
                             .filter(
                                 (page) => page.category.title === category.title

@@ -6,7 +6,6 @@ import { pageQueryBySlug } from "../lib/sanity-queries";
 import type { PageType } from "../lib/types";
 
 import parse from "../utils/parse";
-
 const pageSlug = "index";
 
 const page: PageType = await sanity.fetch(pageQueryBySlug, {
@@ -14,14 +13,18 @@ const page: PageType = await sanity.fetch(pageQueryBySlug, {
 });
 
 const lastUpdated = page.lastUpdated;
-const body = parse(page.body);
+const authors = page.author
+    .map((i) => i.name)
+    .join(", ")
+    .replace(/,\s([^,]+)$/, " and $1");
+const parsedBody = await parse(page.body);
 ---
 
 <Layout title="Home">
     <section>
         <div class="py-2">
-            <h1 class="text-2xl font-bold sm:text-3xl lg:text-6xl capitalize">
-                Astro for Documentation
+            <h1 class="text-2xl font-bold sm:text-3xl lg:text-6xl">
+                Exploring Astro
             </h1>
             <p class="text-sm my-2 text-slate-500">
                 Last updated: {
@@ -30,13 +33,13 @@ const body = parse(page.body);
                         month: "long",
                         year: "numeric",
                     }).format(new Date(lastUpdated))
-                }
+                } by {authors}
             </p>
         </div>
         <article
             aria-label="Post"
-            class="prose:slate prose md:max-w-none prose-p:text-justify prose-p:leading-loose prose-li:leading-loose prose-headings:m-0"
-            set:html={body}
+            class="prose:slate prose md:max-w-none prose-p:text-justify prose-p:leading-loose prose-li:leading-loose"
+            set:html={parsedBody}
         >
         </article>
     </section>

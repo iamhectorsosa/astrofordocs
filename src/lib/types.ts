@@ -10,4 +10,5 @@ export interface PageType extends BasicType {
     category: Pick<CategoryType, "title" | "slug">;
     body: string;
     lastUpdated: string;
+    author: Array<{ name: string }>;
 }

@@ -13,21 +13,27 @@ export async function getStaticPaths() {
         return {
             params: { slug: `${page.category.slug}/${page.slug}` },
             props: {
+                page,
                 title: page.title,
                 lastUpdated: page.lastUpdated,
-                body: parse(page.body),
+                authors: page.author
+                    .map((i) => i.name)
+                    .join(", ")
+                    .replace(/,\s([^,]+)$/, " and $1"),
+                body: page.body,
             },
         };
     });
 }
 
-const { title, lastUpdated, body } = Astro.props;
+const { title, lastUpdated, authors, body } = Astro.props;
+const parsedBody = await parse(body);
 ---
 
 <Layout title={title}>
     <section>
         <div class="py-2">
-            <h1 class="text-2xl font-bold sm:text-3xl lg:text-6xl capitalize">
+            <h1 class="text-2xl font-bold sm:text-3xl lg:text-6xl">
                 {title}
             </h1>
             <p class="text-sm my-2 text-slate-500">
@@ -37,13 +43,13 @@ const { title, lastUpdated, body } = Astro.props;
                         month: "long",
                         year: "numeric",
                     }).format(new Date(lastUpdated))
-                }
+                } by {authors}
             </p>
         </div>
         <article
             aria-label="Post"
-            class="prose:slate prose md:max-w-none prose-p:text-justify prose-p:leading-loose prose-li:leading-loose prose-headings:m-0"
-            set:html={body}
+            class="prose:slate prose md:max-w-none prose-p:text-justify prose-p:leading-loose prose-li:leading-loose"
+            set:html={parsedBody}
         >
         </article>
     </section>
