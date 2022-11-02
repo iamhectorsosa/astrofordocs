@@ -4,9 +4,10 @@ import type { DocsType } from "../../lib/types";
 
 type Props = {
     pages: Array<MDXInstance<DocsType>>;
+    currentPath: string;
 };
 
-const { pages } = Astro.props;
+const { pages, currentPath } = Astro.props;
 
 const filteredPages = pages.filter((p) => Boolean(p.frontmatter.category));
 
@@ -19,8 +20,6 @@ const sortedPages = filteredPages.sort((a, b) =>
 const categories = [
     ...new Set(filteredPages.map((p) => p.frontmatter.category)),
 ];
-
-const currentPath = Astro.url.pathname;
 ---
 
 <div
