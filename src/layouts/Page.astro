@@ -1,0 +1,52 @@
+---
+import Base from "./Base.astro";
+import TOC from "../component/TOC.astro";
+import type { MDXLayoutProps } from "astro";
+import type { DocsType } from "../lib/types";
+
+type Props = MDXLayoutProps<DocsType>;
+
+const {
+    frontmatter: { title, category },
+    url,
+    headings,
+} = Astro.props;
+---
+
+<Base title={title} category={category} url={url ?? "/"}>
+    <section
+        aria-label="Main content"
+        class="bg-white dark:bg-slate-800 p-8 rounded-xl shadow-inner space-y-4"
+    >
+        <h1
+            class={`font-bold ${
+                !url ? "text-4xl md:text-6xl" : "text-2xl md:text-4xl"
+            }`}
+        >
+            {title}
+        </h1>
+        <TOC items={headings} />
+        <article
+            aria-label="Post"
+            class="dark:prose-invert max-w-none prose prose-p:leading-loose prose-li:leading-loose prose-headings:font-bold prose-headings:my-4"
+        >
+            <slot />
+        </article>
+        <a
+            target="_blank"
+            href={`https://github.com/ekqt/astrofordocs/blob/main/src/pages${
+                url === "" ? "/index" : url
+            }.mdx`}
+            class="pt-4 block no-underline text-slate-500 text-sm hover:text-slate-700 dark:text-slate-300 dark:hover:text-slate-100 transition-colors"
+            >Noticed something wrong? Edit this page 🙏🏼
+        </a>
+    </section>
+</Base>
+<style is:global>
+    .prose * > a {
+        @apply border-b-2 border-slate-500 pb-1 no-underline transition-all hover:pb-2;
+    }
+    .prose pre {
+        @apply p-5 drop-shadow-2xl;
+    }
+</style>

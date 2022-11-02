@@ -1,14 +1,22 @@
-export interface BasicType {
+import type { MarkdownHeading } from "astro";
+export interface MetaType {
     title: string;
-    order: number;
-    slug: string;
+    keywords?: string;
+    description?: string;
+    baseUrl?: string;
+    path?: string;
+    image?: string;
+}
+export interface ItemType {
+    label: string;
+    href: string;
 }
 
-export interface CategoryType extends BasicType {}
+export interface DocsType {
+    title: string;
+    category: string;
+}
 
-export interface PageType extends BasicType {
-    category: Pick<CategoryType, "title" | "slug">;
-    body: string;
-    lastUpdated: string;
-    author: Array<{ name: string }>;
+export interface HeadingsType {
+    items: Array<MarkdownHeading>;
 }

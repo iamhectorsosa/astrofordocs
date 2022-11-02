@@ -1,0 +1,74 @@
+---
+import Meta from "../component/Meta.astro";
+import Navbar from "../component/navigation/Navbar.astro";
+import Footer from "../component/navigation/Footer.astro";
+import Sidenav from "../component/navigation/Sidenav.astro";
+
+import { navbarItems, footerItems } from "../lib/data";
+
+import type { MDXInstance } from "astro";
+import type { DocsType } from "../lib/types";
+
+const pages = (await Astro.glob("../pages/docs/*.mdx")) as Array<
+    MDXInstance<DocsType>
+>;
+
+interface Props extends DocsType {
+    url?: string;
+}
+
+const { title, category, url } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <Meta
+            title={title}
+            description={`${title} in ${category ?? "Home"}`}
+            path={url}
+        />
+    </head>
+    <body>
+        <div
+            id="container"
+            class="grid min-h-screen max-w-6xl mx-auto transition-colors"
+        >
+            <aside
+                aria-label="Sidebar navigation"
+                id="sidenav-open"
+                class="z-50 grid px-2 lg:px-6 lg:block grid-cols-[max-content_1fr] invisible target:visible lg:visible lg:translate-x-0 sticky top-0 max-h-screen -translate-x-full target:translate-x-0 transition-transform"
+            >
+                <Sidenav pages={pages} />
+            </aside>
+            <main
+                aria-label="Main panel"
+                class="max-w-[95vw] py-6 px-2 lg:px-6 mx-auto w-full"
+            >
+                <Navbar items={navbarItems} />
+                <slot />
+                <Footer items={footerItems} />
+            </main>
+        </div>
+        <style is:global>
+            html,
+            body {
+                @apply scroll-smooth bg-slate-50 text-slate-900 antialiased transition-colors dark:bg-slate-900 dark:text-slate-50;
+            }
+
+            /** Side Navigation */
+            #container {
+                grid: [stack] 1fr / 1fr [stack] 4fr;
+            }
+
+            @media (max-width: 1024px) {
+                #container {
+                    grid: [stack] 1fr / min-content [stack] 1fr;
+                }
+                #container > * {
+                    grid-area: stack;
+                }
+            }
+        </style>
+    </body>
+</html>

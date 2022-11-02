@@ -1,0 +1,44 @@
+---
+layout: ../../layouts/Page.astro
+title: Typesafety in Layouts
+category: Layouts
+---
+
+## Why Typesafety?
+
+Typesafety is the extent to which a programming language prevents type errors. Naturally, when structuring an application with different layouts, components and pages, at the most fundamental level, it is useful to ensure that we are consuming the right types at all times.
+
+Astro ships with built-in support for TypesScript out of the box. Within any of our `*.astro` files, we can author TypeScript code to prevent errors at runtime by defining the shapes of objects and components in our code. Let's talk about a couple of the recommended practices when using TypeScript for your Astro project.
+
+### Type Imports
+
+In order to avoid duplication and maintain structure at scale, we recommend extracting all of your types into a separate `*.ts` file. Whenever importing any of these types, Astro recommends using explicit type imports and exports whenever possible. Use `import type { SomeType } from './types` instead of a traditional import. This avoids any edge-cases where Astro's bundler may incorrectly treat your imported types as if they were JavaScript.
+
+## Typesafety by example
+
+We can add typesafety to our `/*.astro` files for our frontmatter's object by adding a `category` property in addition to our `title` and declaring its type by using the `MDXLayoutProps` helper:
+
+```jsx
+---
+import Base from './Base.astro'
+import type { MDXLayoutProps } from "astro";
+
+type Props = MDXLayoutProps<{
+    // Define any frontmatter property here
+    title: string;
+    category: string;
+}>;
+
+const {
+    frontmatter: { title, category },
+} = Astro.props;
+// Now your properties are typesafe in your script/template!
+---
+<Base title={title} category={category}>
+  <article class="prose lg:prose-xl">
+    <h1>{title}</h1>
+      <slot />
+    </div>
+  </article>
+</Base>
+```

@@ -1,0 +1,69 @@
+---
+import type { MDXInstance } from "astro";
+import type { DocsType } from "../../lib/types";
+
+type Props = {
+    pages: Array<MDXInstance<DocsType>>;
+};
+
+const { pages } = Astro.props;
+
+const filteredPages = pages.filter((p) => Boolean(p.frontmatter.category));
+
+const sortedPages = filteredPages.sort((a, b) =>
+    a.frontmatter.category.localeCompare(b.frontmatter.category, "en", {
+        sensitivity: "base",
+    })
+);
+
+const categories = [
+    ...new Set(filteredPages.map((p) => p.frontmatter.category)),
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<div
+    class="bg-slate-50 px-12 md:px-24 lg:px-0 py-32 shadow-inner lg:shadow-none transition-colors dark:bg-slate-900"
+>
+    {
+        categories.map((category) => (
+            <>
+                <h3 class="mt-4 mb-2 text-2xl font-semibold capitalize first:mt-0 lg:text-lg">
+                    {category}
+                </h3>
+                <ul
+                    aria-label={`Pages in ${category}`}
+                    class="border-l text-lg lg:text-base"
+                >
+                    {sortedPages
+                        .filter(
+                            ({ frontmatter }) =>
+                                frontmatter.category === category
+                        )
+                        .map(({ frontmatter, url }) => (
+                            <li
+                                aria-label={frontmatter.title}
+                                class={`-ml-px border-l py-1 pl-4 text-slate-400 transition-all hover:border-slate-500 hover:text-slate-500 dark:hover:border-slate-200 dark:hover:text-slate-200
+                                        ${
+                                            currentPath === url
+                                                ? "border-slate-600 font-semibold text-slate-600 dark:border-slate-50 dark:text-slate-50"
+                                                : " border-transparent dark:border-slate-600"
+                                        }
+                                    `}
+                            >
+                                <a href={url}>{frontmatter.title}</a>
+                            </li>
+                        ))}
+                </ul>
+            </>
+        ))
+    }
+</div>
+<a
+    class="bg-black/20 backdrop-blur-sm select-none touch-manipulation lg:hidden"
+    href="#"
+    id="sidenav-close"
+    title="Close Menu"
+    aria-label="Close Menu"
+    onchange="history.go(-1)"></a>

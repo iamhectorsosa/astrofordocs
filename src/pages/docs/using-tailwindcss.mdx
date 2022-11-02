@@ -1,0 +1,52 @@
+---
+layout: ../../layouts/Page.astro
+title: Using TailwindCSS
+category: Integrations
+---
+
+## All your styles in a single line
+
+The official Tailwind CSS Typography plugin provides a set of prose classes you can use to add style defaults to any vanilla HTML you don’t control, like HTML rendered from Markdown, or pulled from a CMS with a single line of code. If we'd go back and add a couple of classes to our `src/layouts/Page.astro` layout file it would be enough to apply these styling defaults.
+
+```jsx
+---
+const { frontmatter: title } = Astro.props;
+---
+<html lang="en">
+  <head>
+    <title>{title}</title>
+  </head>
+  <body>
+    <main class="min-h-screen max-w-6xl mx-auto">
+      <article class="prose lg:prose-xl">
+        <h1>{title}</h1>
+          <slot />
+        </div>
+      </article>
+    </main>
+  </body>
+</html>
+```
+
+### Styling individual HTML elements
+
+There are plenty of [element modifiers](https://tailwindcss.com/docs/typography-plugin#element-modifiers) that you can use to add utility classes to style individual elements. Additionally, we'd recommend adding: `dark:prose-invert`, which triggers hand-designed dark mode versions for every default color theme.
+
+## How to use CSS in Astro
+
+Styling an Astro component is as easy as adding a `<style>` tag in any `*.astro` file, where they are automatically **scoped by default**. You can also opt-out of scoping by adding the `is:global` attribute. If you aren't using TailwindCSS, advance styling languages like [Sass](https://sass-lang.com/) and [Less](https://lesscss.org/) are also supported. 
+
+Say we want to change the look of an HTML element, even if we aren't authoring traditional CSS for our `<a>` and `<pre>` elements, could do something like this :
+
+```jsx
+<style>
+    .prose * > a {
+        @apply no-underline border-b-2 pb-1 hover:pb-2 transition-all;
+    }
+    .prose pre {
+        @apply p-5 drop-shadow-2xl;
+    }
+</style>
+```
+
+**Don't abuse `@apply` just for the sake of making things look "cleaner"**. As Tailwind recommends: If you’re going to use `@apply`, use it for very small, highly reusable things like buttons and form controls — and even then only if you’re not using a framework like React where a component would be a better choice.

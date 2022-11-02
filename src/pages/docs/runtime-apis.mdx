@@ -1,0 +1,98 @@
+---
+layout: ../../layouts/Page.astro
+title: Astro's Runtime APIs
+category: Runtime APIs
+---
+
+## Working with Astro's toolbox
+
+Astro's Runtime APIs is what really brings all of its power together. For example, we have been using `Astro.props` all along to read all the attributes passed as component props. You can browse their documentation to learn more about their APIs, see [API Reference](https://docs.astro.build/en/reference/api-reference/).
+
+For now, let's introduce more of their APIs to build a _Table of contents_ and a _Side navigatation_ component.
+
+### Building a Table of contents
+
+`Astro.props` is an object containing any values that have been passed as attributes. In addition to its `frontmatter` object, a **Markdown layout** will have access to the default props, such as `url` and `headings` among others (see [Markdown Layout Props](https://docs.astro.build/en/guides/markdown-content/#markdown-layout-props)). 
+
+Excluding the `frontmatter` object, which we have already talked about, let's log the entire `Astro.props` to understand how easy Astro makes this information available to use:
+
+```js
+{
+  file: '.../src/pages/docs/runtime-apis.mdx',
+  url: '/docs/runtime-apis',
+  content: {
+    title: "Astro's Runtime APIs",
+    category: 'Runtime APIs',
+    file: '.../src/pages/docs/runtime-apis.mdx',
+    url: '/docs/runtime-apis',
+    astro: {}
+  },
+  frontmatter: {...},
+  headings: [
+    {
+      depth: 1,
+      slug: 'working-with-astros-toolbox',
+      text: 'Working with Astro’s toolbox'
+    },
+  ],
+  'server:root': true
+}
+```
+
+We can destructure the properties we need to access their values and work with them in a separate Astro component like this:
+
+```jsx
+/** LAYOUT: /src/layouts/Page.astro */
+---
+import TOC from "../component/TOC.astro";
+const { headings } = Astro.props;
+---
+
+<TOC headings={headings} />
+
+/** COMPONENT: /src/components/TOC.astro */
+---
+import type { HeadingsType } from "../lib/types";
+type Props = HeadingsType;
+
+const { headings } = Astro.props;
+---
+
+<ul>
+    {headings.map(({ slug, text }) => (
+        <li><a href={`#${slug}`}>{text}</a></li>
+    ))}
+</ul>
+
+```
+
+### Building a Side Navigation
+
+For a side navigation, we do need to read all the files within a given folder in our project. In order to do that, Astro also offers another API for this purpose. `Astro.glob()` is the easiest way to load multiple files into your static site setup. It only takes a single parameter: a relative URL glob of which files you'd like to import.
+
+Each of our `/*.mdx` pages has a title and a category. We'd like to group each page by category and display them in a component for navigation. Let's take a look how we build a Side navigation component using `Astro.blog()`:
+
+```jsx
+import type { MDXInstance } from "astro";
+import type { DocsType } from "../lib/types";
+
+const pages = (await Astro.glob("../pages/docs/*.mdx")) as Array<
+    MDXInstance<DocsType>
+>;
+
+const sortedPages = pages.sort((a, b) =>
+    a.frontmatter.category.localeCompare(b.frontmatter.category, "en", {
+        sensitivity: "base",
+    })
+);
+
+const categories = [
+    ...new Set(pages.map((p) => p.frontmatter.category)),
+];
+```
+
+Once we have this information gathered, we can dynamically create a component mapping over our categories and creating children if they belong within that given category.
+
+A huge thing to note is that `Astro.glob()` is a wrapper of Vite's `import.meta.glob()` API, and it's only available in `/*.astro` files. In case you need access to your files in other file extension types, you can always use Vite's API (see [Vite's Glob Import](https://vitejs.dev/guide/features.html#glob-import)).
+
+That's all there is to it, if you'd like to see the source code in more detail, feel free to check out: [GH: Astro for Docs](https://github.com/ekqt/astrofordocs).

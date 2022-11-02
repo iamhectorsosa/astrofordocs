@@ -1,31 +1,21 @@
 ---
-export interface Props {
-    title?: string;
-    keywords?: string;
-    description?: string;
-    baseUrl?: string;
-    path?: string;
-    image?: string;
-}
+import type { MetaType } from "../lib/types";
+import { defaultMeta } from "../lib/data";
 
-const defaultProps = {
-    title: "Astro for Docs",
-    keywords: "Astro, TailwindCSS",
-    description: "Built with Astro and TailwindCSS",
-    baseUrl: "https://astrofordocs.vercel.app",
-    path: "/",
-    image: "/home.png",
-};
+type Props = MetaType;
 
 const {
-    title = defaultProps.title,
-    keywords = defaultProps.keywords,
-    description = defaultProps.description,
-    baseUrl = defaultProps.baseUrl,
-    path = defaultProps.path,
-    image = defaultProps.image,
+    title = defaultMeta.title,
+    keywords = defaultMeta.keywords,
+    description = defaultMeta.description,
+    baseUrl = defaultMeta.baseUrl,
+    path = defaultMeta.path,
+    image = defaultMeta.image,
 } = Astro.props;
 ---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 {/* Primary Meta Tags */}
 <title>{title}</title>

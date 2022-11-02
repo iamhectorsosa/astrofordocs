@@ -1,17 +1,14 @@
 ---
-export interface ItemType {
-    title: string;
-    url: string;
-}
+import type { ItemType } from "../../lib/types";
 
-export interface Props {
-    items: ItemType[];
-}
+type Props = {
+    items: Array<ItemType>;
+};
 
 const { items } = Astro.props;
 ---
 
-<nav class="flex items-center justify-between py-4">
+<nav aria-label="Main navigation" class="flex items-center justify-between p-6">
     <header class="flex items-center gap-2">
         <a
             title="Open Menu"
@@ -42,9 +39,9 @@ const { items } = Astro.props;
     </header>
     <div class="flex gap-4">
         {
-            items.map((item) => (
+            items.map(({ label, href }) => (
                 <a
-                    href={item.url}
+                    href={href}
                     target="_blank"
                     class="flex items-center gap-2 hover:text-slate-600 dark:hover:text-slate-300"
                 >
@@ -55,7 +52,7 @@ const { items } = Astro.props;
                         viewBox="0 0 24 24"
                         stroke-width="1.5"
                         stroke="currentColor"
-                        class="w-6 h-6"
+                        class="h-6 w-6"
                     >
                         <path
                             stroke-linecap="round"
@@ -63,7 +60,7 @@ const { items } = Astro.props;
                             d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
                         />
                     </svg>
-                    {item.title}
+                    {label}
                 </a>
             ))
         }

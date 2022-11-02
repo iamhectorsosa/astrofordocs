@@ -1,0 +1,55 @@
+---
+layout: ../../layouts/Page.astro
+title: Nested Layouts
+category: Layouts
+---
+
+## Let's talk basics
+
+Layout components are conventionally used to provide a page shell for a given `<slot />` of content. Incredibly useful to manage components, `<html>`, `<head>`, and `<body>` tags and other layouts too. However, Layouts don't need to contain an entire page of HTML. We are able to break down layouts into smaller layouts and then reuse them to create even more flexible pages.
+
+Let's see how could we extract some boilerplate for our `src/layouts/Page.astro` layout by refactoring our code:
+
+```jsx
+---
+import Base from './Base.astro'
+const {frontmatter: title} = Astro.props;
+---
+<Base title={title}>
+  <article class="prose lg:prose-xl">
+    <h1>{title}</h1>
+      <slot />
+    </div>
+  </article>
+</Base>
+```
+
+## Understanding nested layouts
+
+So what's happening here? We are extracting all the HTML boilerplate `<html>`, `<head>`, `<body>`, and `<main>` tags to a Base layout. This new layout can take any props as needed. Here, we are passing the page's title for it to be rendered in our HTML's `<head>` tag. 
+
+Our Base layout will function the same way as our Page layout did before, now with the added benefit that it can be reutilized for other none-MDX pages. Here's how our Base layout looks like:
+
+```jsx
+---
+type Props = {
+    title: string;
+};
+
+const { title } = Astro.props;
+---
+<html lang="en">
+  <head>
+    <title>{title}</title>
+  </head>
+  <body>
+    <main class="min-h-screen max-w-6xl mx-auto">
+      <slot />
+    </main>
+  </body>
+</html>
+```
+
+### Component Props
+
+Props in layouts work as they do in any Astro component. On the example above, notice we are defining our props with TypeScript with the `Props` type interface. This is incredibly helpful to destructure our props from `Astro.props` and ensure typesafety throughout our project.
